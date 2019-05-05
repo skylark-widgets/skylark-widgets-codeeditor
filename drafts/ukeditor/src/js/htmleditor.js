@@ -622,7 +622,7 @@ define("htmleditor",[
                     '<ul class="uk-htmleditor-navbar-nav">',
                         '<li class="uk-htmleditor-button-code"><a>{:lblCodeview}</a></li>',
                         '<li class="uk-htmleditor-button-preview"><a>{:lblPreview}</a></li>',
-                        '<li><a data-htmleditor-button="fullscreen"><i class="uk-icon-expand"></i></a></li>',
+                        '<li><a data-htmleditor-button="fullscreen"><i class="fa fa-expand"></i></a></li>',
                     '</ul>',
                 '</div>',
             '</div>',
@@ -642,39 +642,39 @@ define("htmleditor",[
 
                 fullscreen: {
                     title  : 'Fullscreen',
-                    label  : '<i class="uk-icon-expand"></i>'
+                    label  : '<i class="fa fa-expand"></i>'
                 },
                 bold : {
                     title  : 'Bold',
-                    label  : '<i class="uk-icon-bold"></i>'
+                    label  : '<i class="fa fa-bold"></i>'
                 },
                 italic : {
                     title  : 'Italic',
-                    label  : '<i class="uk-icon-italic"></i>'
+                    label  : '<i class="fa fa-italic"></i>'
                 },
                 strike : {
                     title  : 'Strikethrough',
-                    label  : '<i class="uk-icon-strikethrough"></i>'
+                    label  : '<i class="fa fa-strikethrough"></i>'
                 },
                 blockquote : {
                     title  : 'Blockquote',
-                    label  : '<i class="uk-icon-quote-right"></i>'
+                    label  : '<i class="fa fa-quote-right"></i>'
                 },
                 link : {
                     title  : 'Link',
-                    label  : '<i class="uk-icon-link"></i>'
+                    label  : '<i class="fa fa-link"></i>'
                 },
                 image : {
                     title  : 'Image',
-                    label  : '<i class="uk-icon-picture-o"></i>'
+                    label  : '<i class="fa fa-image"></i>'
                 },
                 listUl : {
                     title  : 'Unordered List',
-                    label  : '<i class="uk-icon-list-ul"></i>'
+                    label  : '<i class="fa fa-list-ul"></i>'
                 },
                 listOl : {
                     title  : 'Ordered List',
-                    label  : '<i class="uk-icon-list-ol"></i>'
+                    label  : '<i class="fa fa-list-ol"></i>'
                 }
 
             });
