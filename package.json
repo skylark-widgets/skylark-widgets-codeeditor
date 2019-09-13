@@ -1,5 +1,5 @@
 {
-  "name": "skylark-ui-codeeditor",
+  "name": "skylark-widgets-codeeditor",
   "description": "The skylark codeeditor widget",
   "version": "0.9.0",
   "keywords": [
@@ -11,23 +11,26 @@
     "framework",
     "web"
   ],
-  "homepage": "https://github.com/skylarkui/skylark-ui-codeeditor/",
+  "homepage": "https://github.com/skylark-widgets/skylark-widgets-codeeditor/",
   "author": "Hudaokeji, Inc.",
   "scripts": {
     "build": "sbundle build ."
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/skylarkui/skylark-ui-codeeditor.git"
+    "url": "https://github.com/skylark-widgets/skylark-widgets-codeeditor.git"
   },
   "bugs": {
-    "url": "https://github.com/skylarkui/skylark-ui-codeeditor/issues"
+    "url": "https://github.com/skylark-widgets/skylark-widgets-codeeditor/issues"
   },
   "license": "MIT",
   "dependencies": {
-    "skylark-langx": "https://github.com/skylarklangx/skylark-langx#master",
-    "skylark-utils": "https://github.com/skylarkutils/skylark-utils#master",
-    "skylark-ui-swt": "https://github.com/skylarkui/skylark-ui-swt#master"
+    "skylark-codemirror": "git+https://github.com/skylark-integration/skylark-codemirror.git#master",
+    "skylark-easyeditor": "git+https://github.com/skylark-integration/skylark-easyeditor.git#master",
+    "skylark-langx": "git+https://github.com/skylarklangx/skylark-langx.git#master",
+    "skylark-parsers-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git#master",
+    "skylark-utils-dom": "git+https://github.com/skylarkutils/skylark-utils-dom.git#master",
+    "skylark-widgets-swt": "git+https://github.com/skylark-widgets/skylark-widgets-swt.git#master"
   },
   "engines": {
     "node": ">=0.10.1"

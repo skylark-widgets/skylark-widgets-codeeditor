@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.js"],"names":["define","coder"],"mappings":";;;;;;;AAAAA,QACI,UACA,YACD,SAASC,GACR,OAAOA","file":"../main.js","sourcesContent":["define([\r\n    \"./coder\",\r\n    \"./Editor\"\r\n], function(coder) {\r\n    return coder;\r\n});"]}
