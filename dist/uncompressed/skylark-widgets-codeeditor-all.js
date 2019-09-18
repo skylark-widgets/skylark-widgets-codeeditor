@@ -9137,7 +9137,7 @@ define('skylark-domx-fx/fx',[
 });
 define('skylark-domx-fx/main',[
 	"./fx"
-],function(browser){
+],function(fx){
 	return fx;
 });
 define('skylark-domx-fx', ['skylark-domx-fx/main'], function (main) { return main; });
@@ -10609,7 +10609,7 @@ define('skylark-domx-velm/velm',[
     });
 
 
-    return dom.elmx = elmx;
+    return skylark.attach("domx.elmx", elmx);
 });
 define('skylark-domx-velm/main',[
 	"./velm"
