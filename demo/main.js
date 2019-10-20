@@ -182,16 +182,16 @@ require.config({
      { name: "skylark-widgets-swt", location: "../node_modules/skylark-widgets-swt/dist/uncompressed/skylark-widgets-swt"},
      { name: "skylark-codemirror", location: "../../../intg/editor/skylark-codemirror/src"},
      { name: "skylark-easyeditor", location: "../../../intg/editor/skylark-easyeditor/src"},
-     { name: "skylark-codeeditor", location: "../src" }
+     { name: "skylark-widgets-coder", location: "../src" }
   ],
 });
  
 require([
   "skylark-utils-dom/query",
-  "skylark-codeeditor/helper",
-  "skylark-codeeditor/Editor",
-  "skylark-codeeditor/addons/html",
-  "skylark-codeeditor/addons/markdown",
+  "skylark-widgets-coder/helper",
+  "skylark-widgets-coder/Editor",
+  "skylark-widgets-coder/addons/html",
+  "skylark-widgets-coder/addons/markdown",
   "skylark-codemirror/mode/htmlmixed/htmlmixed",
   "skylark-codemirror/mode/markdown/markdown"
 

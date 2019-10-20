@@ -1,5 +1,5 @@
 /**
- * skylark-widgets-codeeditor - The skylark codeeditor widget
+ * skylark-widgets-coder - The skylark codeeditor widget
  * @author Hudaokeji, Inc.
  * @version v0.9.0
  * @link https://github.com/skylark-widgets/skylark-widgets-codeeditor/
@@ -86,12 +86,12 @@
 
 })(function(define,require) {
 
-define('skylark-widgets-codeeditor/coder',[
+define('skylark-widgets-coder/coder',[
 	"skylark-langx/skylark"
 ],function(skylark){
 	return skylark.attach("widgets.coder",{});
 });
-define('skylark-widgets-codeeditor/Preview',[
+define('skylark-widgets-coder/Preview',[
   "skylark-langx/langx",
   "skylark-utils-dom/browser",
   "skylark-utils-dom/datax",
@@ -771,7 +771,7 @@ define('skylark-widgets-codeeditor/Preview',[
     return Preview;
 });
 
-define('skylark-widgets-codeeditor/helper',[
+define('skylark-widgets-coder/helper',[
     "skylark-langx/langx",
     "skylark-utils-dom/query",
 	"./coder"
@@ -830,7 +830,7 @@ define('skylark-widgets-codeeditor/helper',[
 
   	
  });
-define('skylark-widgets-codeeditor/Editor',[
+define('skylark-widgets-coder/Editor',[
     "skylark-langx/langx",
     "skylark-utils-dom/query",
     "skylark-widgets-swt/Widget",
@@ -1338,14 +1338,14 @@ define('skylark-widgets-codeeditor/Editor',[
 });
 
 
-define('skylark-widgets-codeeditor/main',[
+define('skylark-widgets-coder/main',[
     "./coder",
     "./Editor"
 ], function(coder) {
     return coder;
 });
-define('skylark-widgets-codeeditor', ['skylark-widgets-codeeditor/main'], function (main) { return main; });
+define('skylark-widgets-coder', ['skylark-widgets-coder/main'], function (main) { return main; });
 
 
 },this);
-//# sourceMappingURL=sourcemaps/skylark-widgets-codeeditor.js.map
+//# sourceMappingURL=sourcemaps/skylark-widgets-coder.js.map

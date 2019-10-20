@@ -1,5 +1,5 @@
 /**
- * skylark-widgets-codeeditor - The skylark codeeditor widget
+ * skylark-widgets-coder - The skylark codeeditor widget
  * @author Hudaokeji, Inc.
  * @version v0.9.0
  * @link https://github.com/skylark-widgets/skylark-widgets-codeeditor/
@@ -128,7 +128,7 @@ define('skylark-langx/skylark',[
 	return ns;
 });
 
-define('skylark-widgets-codeeditor/coder',[
+define('skylark-widgets-coder/coder',[
 	"skylark-langx/skylark"
 ],function(skylark){
 	return skylark.attach("widgets.coder",{});
@@ -4916,6 +4916,16 @@ define('skylark-domx-noder/noder',[
       return (node === document.body) ? true : document.body.contains(node);
     }        
 
+    var blockNodes = ["div", "p", "ul", "ol", "li", "blockquote", "hr", "pre", "h1", "h2", "h3", "h4", "h5", "table"];
+
+    function isBlockNode(node) {
+        if (!node || node.nodeType === 3) {
+          return false;
+        }
+        return new RegExp("^(" + (blockNodes.join('|')) + ")$").test(node.nodeName.toLowerCase());
+    }
+
+
     /*   
      * Get the owner document object for the specified element.
      * @param {Node} elm
@@ -5038,7 +5048,17 @@ define('skylark-domx-noder/noder',[
             scrollParent;
     };
 
-        /*   
+
+    function reflow(elm) {
+        if (el == null) {
+          elm = document;
+        }
+        elm.offsetHeight;
+
+        return this;      
+    }
+
+    /*   
      * Replace an old node with the specified node.
      * @param {Node} node
      * @param {Node} oldNode
@@ -5233,6 +5253,8 @@ define('skylark-domx-noder/noder',[
         prepend: prepend,
 
         append: append,
+
+        reflow: reflow,
 
         remove: remove,
 
@@ -10254,6 +10276,14 @@ define('skylark-domx-query/query',[
         $.fn.enableSelection = function() {
             return this.off( ".ui-disableSelection" );
         };
+
+        $.fn.reflow = function() {
+            return noder.flow(this[0]);
+        };
+
+        $.fn.isBlockNode = function() {
+            return noder.isBlockNode(this[0]);
+        };
        
 
     })(query);
@@ -10286,43 +10316,6 @@ define('skylark-utils-dom/query',[
 
     return dom.query = query;
 
-});
-define('skylark-utils-dom/browser',[
-    "./dom",
-    "skylark-domx-browser"
-], function(dom,browser) {
-    "use strict";
-
-    return dom.browser = browser;
-});
-
-define('skylark-utils-dom/datax',[
-    "./dom",
-    "skylark-domx-data"
-], function(dom, datax) {
- 
-    return dom.datax = datax;
-});
-define('skylark-utils-dom/eventer',[
-    "./dom",
-    "skylark-domx-eventer"
-], function(dom, eventer) {
- 
-    return dom.eventer = eventer;
-});
-define('skylark-utils-dom/noder',[
-    "./dom",
-    "skylark-domx-noder"
-], function(dom, noder) {
-
-    return dom.noder = noder;
-});
-define('skylark-utils-dom/geom',[
-    "./dom",
-    "skylark-domx-geom"
-], function(dom, geom) {
-
-    return dom.geom = geom;
 });
 define('skylark-domx-velm/velm',[
     "skylark-langx/skylark",
@@ -10618,12 +10611,6 @@ define('skylark-domx-velm/main',[
 });
 define('skylark-domx-velm', ['skylark-domx-velm/main'], function (main) { return main; });
 
-define('skylark-utils-dom/elmx',[
-    "./dom",
-    "skylark-domx-velm"
-], function(dom, elmx) {
-     return dom.elmx = elmx;
-});
 define('skylark-domx-plugins/plugins',[
     "skylark-langx/skylark",
     "skylark-langx/langx",
@@ -10695,9 +10682,7 @@ define('skylark-domx-plugins/plugins',[
             }
             if (!plugin) {
                 plugin = instantiate(elm, pluginName,typeof options == 'object' && options || {});
-            }
-
-            if (options) {
+            } else  if (options) {
                 var args = slice.call(arguments,1); //2
                 if (extfn) {
                     return extfn.apply(plugin,args);
@@ -10941,15 +10926,6 @@ define('skylark-domx-plugins/main',[
 });
 define('skylark-domx-plugins', ['skylark-domx-plugins/main'], function (main) { return main; });
 
-define('skylark-utils-dom/plugins',[
-    "./dom",
-    "skylark-domx-plugins"
-], function(dom, plugins) {
-    "use strict";
-
-
-    return dom.plugins = plugins;
-});
 define('skylark-data-collection/collections',[
 	"skylark-langx/skylark"
 ],function(skylark){
@@ -11266,85 +11242,36 @@ define('skylark-data-collection/Map',[
     return Map;
 });
 
-define('skylark-widgets-swt/swt',[
-  "skylark-langx/skylark",
-  "skylark-langx/langx",
-  "skylark-utils-dom/browser",
-  "skylark-utils-dom/eventer",
-  "skylark-utils-dom/noder",
-  "skylark-utils-dom/geom",
-  "skylark-utils-dom/query"
-],function(skylark,langx,browser,eventer,noder,geom,$){
-	var ui = skylark.ui = skylark.ui || {};
-		sbswt = ui.sbswt = {};
 
-	var CONST = {
-		BACKSPACE_KEYCODE: 8,
-		COMMA_KEYCODE: 188, // `,` & `<`
-		DELETE_KEYCODE: 46,
-		DOWN_ARROW_KEYCODE: 40,
-		ENTER_KEYCODE: 13,
-		TAB_KEYCODE: 9,
-		UP_ARROW_KEYCODE: 38
-	};
+define('skylark-data-collection/HashMap',[
+    "./collections",
+	"./Map"
+],function(collections,_Map) {
 
-	var isShiftHeld = function isShiftHeld (e) { return e.shiftKey === true; };
-
-	var isKey = function isKey (keyCode) {
-		return function compareKeycodes (e) {
-			return e.keyCode === keyCode;
-		};
-	};
-
-	var isBackspaceKey = isKey(CONST.BACKSPACE_KEYCODE);
-	var isDeleteKey = isKey(CONST.DELETE_KEYCODE);
-	var isTabKey = isKey(CONST.TAB_KEYCODE);
-	var isUpArrow = isKey(CONST.UP_ARROW_KEYCODE);
-	var isDownArrow = isKey(CONST.DOWN_ARROW_KEYCODE);
-
-	var ENCODED_REGEX = /&[^\s]*;/;
-	/*
-	 * to prevent double encoding decodes content in loop until content is encoding free
-	 */
-	var cleanInput = function cleanInput (questionableMarkup) {
-		// check for encoding and decode
-		while (ENCODED_REGEX.test(questionableMarkup)) {
-			questionableMarkup = $('<i>').html(questionableMarkup).text();
-		}
-
-		// string completely decoded now encode it
-		return $('<i>').text(questionableMarkup).html();
-	};
-
-	langx.mixin(ui, {
-		CONST: CONST,
-		cleanInput: cleanInput,
-		isBackspaceKey: isBackspaceKey,
-		isDeleteKey: isDeleteKey,
-		isShiftHeld: isShiftHeld,
-		isTabKey: isTabKey,
-		isUpArrow: isUpArrow,
-		isDownArrow: isDownArrow
+	var HashMap = collections.HashMap = _Map.inherit({
 	});
 
-	return ui;
-
+	return HashMap;
 });
-
-define('skylark-widgets-swt/Widget',[
+define('skylark-widgets-base/base',[
+	"skylark-langx/skylark"
+],function(skylark){
+	return skylark.attach("widgets.base",{});
+});
+define('skylark-widgets-base/Widget',[
   "skylark-langx/skylark",
   "skylark-langx/langx",
-  "skylark-utils-dom/browser",
-  "skylark-utils-dom/datax",
-  "skylark-utils-dom/eventer",
-  "skylark-utils-dom/noder",
-  "skylark-utils-dom/geom",
-  "skylark-utils-dom/elmx",
-  "skylark-utils-dom/query",
-  "skylark-utils-dom/plugins",
-  "skylark-data-collection/Map",
-  "./swt"
-],function(skylark,langx,browser,datax,eventer,noder,geom,elmx,$,plugins,Map,swt){
+  "skylark-domx-browser",
+  "skylark-domx-data",
+  "skylark-domx-eventer",
+  "skylark-domx-noder",
+  "skylark-domx-geom",
+  "skylark-domx-velm",
+  "skylark-domx-query",
+  "skylark-domx-plugins",
+  "skylark-data-collection/HashMap",
+  "./base"
+],function(skylark,langx,browser,datax,eventer,noder,geom,elmx,$,plugins,HashMap,base){
 
 /*---------------------------------------------------------------------------------*/
 
@@ -11370,11 +11297,35 @@ define('skylark-widgets-swt/Widget',[
         }
         
         Object.defineProperty(this,"state",{
-          value :this.options.state || new Map()
+          value :this.options.state || new HashMap()
         });
 
         //this.state = this.options.state || new Map();
         this._init();
+
+        var addonCategoryOptions = this.options.addons;
+        if (addonCategoryOptions) {
+          var widgetCtor = this.constructor,
+              addons = widgetCtor.addons;
+          for (var categoryName in addonCategoryOptions) {
+              for (var i =0;i < addonCategoryOptions[categoryName].length; i++ ) {
+                var addonOption = addonCategoryOptions[categoryName][i];
+                if (langx.isString(addonOption)) {
+                  var addonName = addonOption,
+                      addonSetting = addons[categoryName][addonName],
+                      addonCtor = addonSetting.ctor ? addonSetting.ctor : addonSetting;
+
+                  this.addon(addonCtor,addonSetting.options);
+
+                }
+
+              }
+          }
+
+
+        }
+
+
      },
 
     /**
@@ -11487,15 +11438,14 @@ define('skylark-widgets-swt/Widget',[
       }
     },
 
-    addon : function(categoryName,addonName,setting) {
+    addon : function(ctor,setting) {
+      var categoryName = ctor.categoryName,
+          addonName = ctor.addonName;
+
       this._addons = this.addons || {};
       var category = this._addons[categoryName] = this._addons[categoryName] || {};
-      if (setting === undefined) {
-        return category[addonName] || null;      
-      } else {
-        category[addonName] = setting;
-        return this;
-      }
+      category[addonName] = new ctor(this,setting);
+      return this;
     },
 
     addons : function(categoryName,settings) {
@@ -11519,6 +11469,7 @@ define('skylark-widgets-swt/Widget',[
     render: function() {
       return this._elm;
     },
+
 
 
     /**
@@ -11735,7 +11686,13 @@ define('skylark-widgets-swt/Widget',[
     return ctor;
   };
 
-	return swt.Widget = Widget;
+	return base.Widget = Widget;
+});
+
+define('skylark-widgets-swt/Widget',[
+  "skylark-widgets-base/Widget"
+],function(Widget){
+  return Widget;
 });
 
 define('skylark-codemirror/cm',[
@@ -22283,12 +22240,51 @@ define('skylark-codemirror/CodeMirror',[
     'use strict';
     return cm.CodeMirror = _main.CodeMirror;
 });
+define('skylark-utils-dom/browser',[
+    "./dom",
+    "skylark-domx-browser"
+], function(dom,browser) {
+    "use strict";
+
+    return dom.browser = browser;
+});
+
+define('skylark-utils-dom/noder',[
+    "./dom",
+    "skylark-domx-noder"
+], function(dom, noder) {
+
+    return dom.noder = noder;
+});
+define('skylark-utils-dom/eventer',[
+    "./dom",
+    "skylark-domx-eventer"
+], function(dom, eventer) {
+ 
+    return dom.eventer = eventer;
+});
 define('skylark-utils-dom/finder',[
     "./dom",
     "skylark-domx-finder"
 ], function(dom, finder) {
 
     return dom.finder = finder;
+});
+define('skylark-utils-dom/datax',[
+    "./dom",
+    "skylark-domx-data"
+], function(dom, datax) {
+ 
+    return dom.datax = datax;
+});
+define('skylark-utils-dom/plugins',[
+    "./dom",
+    "skylark-domx-plugins"
+], function(dom, plugins) {
+    "use strict";
+
+
+    return dom.plugins = plugins;
 });
 define('skylark-easyeditor/EasyEditor',[
   "skylark-langx/skylark",
@@ -23233,7 +23229,20 @@ define('skylark-easyeditor/EasyEditor',[
 	return  EasyEditor;	
 });
 
-define('skylark-widgets-codeeditor/Preview',[
+define('skylark-utils-dom/geom',[
+    "./dom",
+    "skylark-domx-geom"
+], function(dom, geom) {
+
+    return dom.geom = geom;
+});
+define('skylark-utils-dom/elmx',[
+    "./dom",
+    "skylark-domx-velm"
+], function(dom, elmx) {
+     return dom.elmx = elmx;
+});
+define('skylark-widgets-coder/Preview',[
   "skylark-langx/langx",
   "skylark-utils-dom/browser",
   "skylark-utils-dom/datax",
@@ -23913,7 +23922,7 @@ define('skylark-widgets-codeeditor/Preview',[
     return Preview;
 });
 
-define('skylark-widgets-codeeditor/helper',[
+define('skylark-widgets-coder/helper',[
     "skylark-langx/langx",
     "skylark-utils-dom/query",
 	"./coder"
@@ -23972,7 +23981,7 @@ define('skylark-widgets-codeeditor/helper',[
 
   	
  });
-define('skylark-widgets-codeeditor/Editor',[
+define('skylark-widgets-coder/Editor',[
     "skylark-langx/langx",
     "skylark-utils-dom/query",
     "skylark-widgets-swt/Widget",
@@ -24480,13 +24489,13 @@ define('skylark-widgets-codeeditor/Editor',[
 });
 
 
-define('skylark-widgets-codeeditor/main',[
+define('skylark-widgets-coder/main',[
     "./coder",
     "./Editor"
 ], function(coder) {
     return coder;
 });
-define('skylark-widgets-codeeditor', ['skylark-widgets-codeeditor/main'], function (main) { return main; });
+define('skylark-widgets-coder', ['skylark-widgets-coder/main'], function (main) { return main; });
 
 
 },this);

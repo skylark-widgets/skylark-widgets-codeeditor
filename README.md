@@ -1,2 +1,2 @@
-# skylark-ui-codeeditor
-The skylark code widget library
+# skylark-widgets-coder
+The skylark coding widget library
