@@ -29,7 +29,6 @@
     "skylark-easyeditor": "git+https://github.com/skylark-integration/skylark-easyeditor.git#master",
     "skylark-langx": "git+https://github.com/skylarklangx/skylark-langx.git#master",
     "skylark-parsers-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git#master",
-    "skylark-utils-dom": "git+https://github.com/skylarkutils/skylark-utils-dom.git#master",
     "skylark-widgets-swt": "git+https://github.com/skylark-widgets/skylark-widgets-swt.git#master"
   },
   "engines": {

@@ -1,5 +1,5 @@
 define([
-    "skylark-utils-dom/query",
+    "skylark-domx-query",
     "../Editor"
 ],function($,Editor){
     Editor.addon('base', {

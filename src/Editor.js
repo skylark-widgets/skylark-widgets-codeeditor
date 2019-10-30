@@ -1,6 +1,6 @@
 define([
     "skylark-langx/langx",
-    "skylark-utils-dom/query",
+    "skylark-domx-query",
     "skylark-widgets-swt/Widget",
     "skylark-codemirror/CodeMirror",
     "skylark-easyeditor/EasyEditor",

@@ -1,12 +1,12 @@
 define([
   "skylark-langx/langx",
-  "skylark-utils-dom/browser",
-  "skylark-utils-dom/datax",
-  "skylark-utils-dom/eventer",
-  "skylark-utils-dom/noder",
-  "skylark-utils-dom/geom",
-  "skylark-utils-dom/elmx",
-  "skylark-utils-dom/query",
+  "skylark-domx-browser",
+  "skylark-domx-data",
+  "skylark-domx-eventer",
+  "skylark-domx-noder",
+  "skylark-domx-geom",
+  "skylark-domx-velm",
+  "skylark-domx-query",
   "skylark-widgets-swt/Widget"
 ],function(langx,browser,datax,eventer,noder,geom,elmx,$,Widget){
 
