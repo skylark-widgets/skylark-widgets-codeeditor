@@ -106,6 +106,11 @@ require.config({
             main: 'main'
          },
          {
+           name : "skylark-domx-files",
+           location : "../node_modules/skylark-domx-files/dist/uncompressed/skylark-domx-files",
+            main: 'main'
+         },
+         {
            name : "skylark-domx-finder",
            location : "../node_modules/skylark-domx-finder/dist/uncompressed/skylark-domx-finder",
             main: 'main'
@@ -167,6 +172,11 @@ require.config({
             main: 'main'
          },
          {
+           name : "skylark-storages-diskfs",
+           location : "../node_modules/skylark-storages-diskfs/dist/uncompressed/skylark-storages-diskfs",
+            main: 'main'
+         },         
+         {
            name : "skylark-widgets-base",
            location : "../node_modules/skylark-widgets-base/dist/uncompressed/skylark-widgets-base",
             main: 'main'
@@ -182,16 +192,16 @@ require.config({
      { name: "skylark-widgets-swt", location: "../node_modules/skylark-widgets-swt/dist/uncompressed/skylark-widgets-swt"},
      { name: "skylark-codemirror", location: "../../../intg/editor/skylark-codemirror/src"},
      { name: "skylark-easyeditor", location: "../../../intg/editor/skylark-easyeditor/src"},
-     { name: "skylark-widgets-coder", location: "../src" }
+     { name: "skylark-widgets-textpad", location: "../src" }
   ],
 });
  
 require([
   "skylark-utils-dom/query",
-  "skylark-widgets-coder/helper",
-  "skylark-widgets-coder/Editor",
-  "skylark-widgets-coder/addons/html",
-  "skylark-widgets-coder/addons/markdown",
+  "skylark-widgets-textpad/helper",
+  "skylark-widgets-textpad/Editor",
+  "skylark-widgets-textpad/addons/html",
+  "skylark-widgets-textpad/addons/markdown",
   "skylark-codemirror/mode/htmlmixed/htmlmixed",
   "skylark-codemirror/mode/markdown/markdown"
 

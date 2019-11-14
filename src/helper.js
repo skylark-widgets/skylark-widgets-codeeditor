@@ -1,8 +1,8 @@
 define([
     "skylark-langx/langx",
     "skylark-domx-query",
-	"./coder"
-],function(langx,$,coder) {
+	"./textpad"
+],function(langx,$,textpad) {
     var helper = {
         debounce : function(func, wait, immediate) {
             var timeout;
@@ -53,7 +53,7 @@ define([
     };
 
 
-    return coder.helper = helper;
+    return textpad.helper = helper;
 
   	
  });

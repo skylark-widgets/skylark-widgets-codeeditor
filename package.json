@@ -1,6 +1,6 @@
 {
-  "name": "skylark-widgets-coder",
-  "description": "The skylark codeeditor widget",
+  "name": "skylark-widgets-textpad",
+  "description": "The skylark text editor widget",
   "version": "0.9.0",
   "keywords": [
     "css",
@@ -11,17 +11,17 @@
     "framework",
     "web"
   ],
-  "homepage": "https://github.com/skylark-widgets/skylark-widgets-codeeditor/",
+  "homepage": "https://github.com/skylark-widgets/skylark-widgets-textpad/",
   "author": "Hudaokeji, Inc.",
   "scripts": {
     "build": "sbundle build ."
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/skylark-widgets/skylark-widgets-codeeditor.git"
+    "url": "https://github.com/skylark-widgets/skylark-widgets-textpad.git"
   },
   "bugs": {
-    "url": "https://github.com/skylark-widgets/skylark-widgets-codeeditor/issues"
+    "url": "https://github.com/skylark-widgets/skylark-widgets-textpad/issues"
   },
   "license": "MIT",
   "dependencies": {

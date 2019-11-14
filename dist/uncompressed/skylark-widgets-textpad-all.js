@@ -1,8 +1,8 @@
 /**
- * skylark-widgets-coder - The skylark codeeditor widget
+ * skylark-widgets-textpad - The skylark text editor widget
  * @author Hudaokeji, Inc.
  * @version v0.9.0
- * @link https://github.com/skylark-widgets/skylark-widgets-codeeditor/
+ * @link https://github.com/skylark-widgets/skylark-widgets-textpad/
  * @license MIT
  */
 (function(factory,globals) {
@@ -128,10 +128,10 @@ define('skylark-langx/skylark',[
 	return ns;
 });
 
-define('skylark-widgets-coder/coder',[
+define('skylark-widgets-textpad/textpad',[
 	"skylark-langx/skylark"
 ],function(skylark){
-	return skylark.attach("widgets.coder",{});
+	return skylark.attach("widgets.textpad",{});
 });
 define('skylark-langx-types/types',[
     "skylark-langx-ns"
@@ -2532,7 +2532,7 @@ define('skylark-langx/Deferred',[
 ],function(Deferred){
     return Deferred;
 });
-define('skylark-langx-emitter/Evented',[
+define('skylark-langx-emitter/Emitter',[
   "skylark-langx-ns/ns",
   "skylark-langx-types",
   "skylark-langx-objects",
@@ -2546,7 +2546,8 @@ define('skylark-langx-emitter/Evented',[
         isFunction = types.isFunction,
         isString = types.isString,
         isEmptyObject = types.isEmptyObject,
-        mixin = objects.mixin;
+        mixin = objects.mixin,
+        safeMixin = objects.safeMixin;
 
     function parse(event) {
         var segs = ("" + event).split(".");
@@ -2556,7 +2557,7 @@ define('skylark-langx-emitter/Evented',[
         };
     }
 
-    var Evented = klass({
+    var Emitter = klass({
         on: function(events, selector, data, callback, ctx, /*used internally*/ one) {
             var self = this,
                 _hub = this._hub || (this._hub = {});
@@ -2608,7 +2609,7 @@ define('skylark-langx-emitter/Evented',[
             return this.on(events, selector, data, callback, ctx, 1);
         },
 
-        trigger: function(e /*,argument list*/ ) {
+        emit: function(e /*,argument list*/ ) {
             if (!this._hub) {
                 return this;
             }
@@ -2812,16 +2813,35 @@ define('skylark-langx-emitter/Evented',[
         }
     });
 
-    return skylark.attach("langx.Evented",Evented);
+    Emitter.prototype.trigger = Emitter.prototype.emit;
+
+    Emitter.createEvent = function (type,props) {
+        var e = new CustomEvent(type,props);
+        return safeMixin(e, props);
+    };
+
+    return skylark.attach("langx.Emitter",Emitter);
 
 });
+define('skylark-langx-emitter/Evented',[
+  "skylark-langx-ns/ns",
+	"./Emitter"
+],function(skylark,Emitter){
+	return skylark.attach("langx.Evented",Emitter);
+});
 define('skylark-langx-emitter/main',[
+	"./Emitter",
 	"./Evented"
-],function(Evented){
-	return Evented;
+],function(Emitter){
+	return Emitter;
 });
 define('skylark-langx-emitter', ['skylark-langx-emitter/main'], function (main) { return main; });
 
+define('skylark-langx/Emitter',[
+    "skylark-langx-emitter"
+],function(Evented){
+    return Evented;
+});
 define('skylark-langx/Evented',[
     "skylark-langx-emitter"
 ],function(Evented){
@@ -3504,6 +3524,7 @@ define('skylark-langx/langx',[
     "./async",
     "./datetimes",
     "./Deferred",
+    "./Emitter",
     "./Evented",
     "./funcs",
     "./hoster",
@@ -3514,7 +3535,7 @@ define('skylark-langx/langx',[
     "./strings",
     "./topic",
     "./types"
-], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
+], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Emitter,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
     "use strict";
     var toString = {}.toString,
         concat = Array.prototype.concat,
@@ -3525,13 +3546,6 @@ define('skylark-langx/langx',[
         safeMixin = objects.safeMixin,
         isFunction = types.isFunction;
 
-
-    function createEvent(type, props) {
-        var e = new CustomEvent(type, props);
-
-        return safeMixin(e, props);
-    }
-    
 
     function funcArg(context, arg, idx, payload) {
         return isFunction(arg) ? arg.call(context, idx, payload) : arg;
@@ -3570,7 +3584,7 @@ define('skylark-langx/langx',[
     }
 
     mixin(langx, {
-        createEvent : createEvent,
+        createEvent : Emitter.createEvent,
 
         funcArg: funcArg,
 
@@ -3591,6 +3605,8 @@ define('skylark-langx/langx',[
         async : async,
         
         Deferred: Deferred,
+
+        Emitter: Emitter,
 
         Evented: Evented,
 
@@ -7688,10 +7704,11 @@ define('skylark-domx-eventer/eventer',[
     return skylark.attach("domx.eventer",eventer);
 });
 define('skylark-domx-eventer/main',[
+    "skylark-langx/langx",
     "./eventer",
     "skylark-domx-velm",
     "skylark-domx-query"        
-],function(eventer,velm,$){
+],function(langx,eventer,velm,$){
 
     // from ./eventer
     velm.delegate([
@@ -7755,6 +7772,29 @@ define('skylark-domx-eventer/main',[
 });
 define('skylark-domx-eventer', ['skylark-domx-eventer/main'], function (main) { return main; });
 
+define('skylark-domx-files/files',[
+    "skylark-langx/skylark"
+], function(skylark) {
+
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+
+
+    var files = function() {
+        return files;
+    };
+
+    return skylark.attach("domx.files", files);
+});
 define('skylark-domx-styler/styler',[
     "skylark-langx/skylark",
     "skylark-langx/langx"
@@ -8093,6 +8133,289 @@ define('skylark-domx-styler/main',[
 	return styler;
 });
 define('skylark-domx-styler', ['skylark-domx-styler/main'], function (main) { return main; });
+
+define('skylark-storages-diskfs/diskfs',[
+    "skylark-langx/skylark"
+], function(skylark) {
+
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+
+
+    var diskfs = function() {
+        return diskfs;
+    };
+
+    return skylark.attach("storages.diskfs", diskfs);
+});
+ define('skylark-storages-diskfs/webentry',[
+    "skylark-langx/arrays",
+    "skylark-langx/Deferred",
+    "./diskfs"
+],function(arrays,Deferred, diskfs){
+    var concat = Array.prototype.concat;
+    var webentry = (function() {
+        function one(entry, path) {
+            var d = new Deferred(),
+                onError = function(e) {
+                    d.reject(e);
+                };
+
+            path = path || '';
+            if (entry.isFile) {
+                entry.file(function(file) {
+                    file.relativePath = path;
+                    d.resolve(file);
+                }, onError);
+            } else if (entry.isDirectory) {
+                var dirReader = entry.createReader();
+                dirReader.readEntries(function(entries) {
+                    all(
+                        entries,
+                        path + entry.name + '/'
+                    ).then(function(files) {
+                        d.resolve(files);
+                    }).catch(onError);
+                }, onError);
+            } else {
+                // Return an empy list for file system items
+                // other than files or directories:
+                d.resolve([]);
+            }
+            return d.promise;
+        }
+
+        function all(entries, path) {
+            return Deferred.all(
+                arrays.map(entries, function(entry) {
+                    return one(entry, path);
+                })
+            ).then(function() {
+                return concat.apply([], arguments);
+            });
+        }
+
+        return {
+            one: one,
+            all: all
+        };
+    })();
+
+    return diskfs.webentry = webentry;
+});
+  define('skylark-domx-files/dropzone',[
+    "skylark-langx/arrays",
+    "skylark-langx/Deferred",
+    "skylark-domx-styler",
+    "skylark-domx-eventer",
+    "./files",
+    "skylark-storages-diskfs/webentry"
+],function(arrays,Deferred, styler, eventer, files, webentry){  /*
+     * Make the specified element to could accept HTML5 file drag and drop.
+     * @param {HTMLElement} elm
+     * @param {PlainObject} params
+     */
+    function dropzone(elm, params) {
+        params = params || {};
+        var hoverClass = params.hoverClass || "dropzone",
+            droppedCallback = params.dropped;
+
+        var enterdCount = 0;
+        eventer.on(elm, "dragenter", function(e) {
+            if (e.dataTransfer && e.dataTransfer.types.indexOf("Files") > -1) {
+                eventer.stop(e);
+                enterdCount++;
+                styler.addClass(elm, hoverClass)
+            }
+        });
+
+        eventer.on(elm, "dragover", function(e) {
+            if (e.dataTransfer && e.dataTransfer.types.indexOf("Files") > -1) {
+                eventer.stop(e);
+            }
+        });
+
+        eventer.on(elm, "dragleave", function(e) {
+            if (e.dataTransfer && e.dataTransfer.types.indexOf("Files") > -1) {
+                enterdCount--
+                if (enterdCount == 0) {
+                    styler.removeClass(elm, hoverClass);
+                }
+            }
+        });
+
+        eventer.on(elm, "drop", function(e) {
+            if (e.dataTransfer && e.dataTransfer.types.indexOf("Files") > -1) {
+                styler.removeClass(elm, hoverClass)
+                eventer.stop(e);
+                if (droppedCallback) {
+                    var items = e.dataTransfer.items;
+                    if (items && items.length && (items[0].webkitGetAsEntry ||
+                            items[0].getAsEntry)) {
+                        webentry.all(
+                            arrays.map(items, function(item) {
+                                if (item.webkitGetAsEntry) {
+                                    return item.webkitGetAsEntry();
+                                }
+                                return item.getAsEntry();
+                            })
+                        ).then(droppedCallback);
+                    } else {
+                        droppedCallback(e.dataTransfer.files);
+                    }
+                }
+            }
+        });
+
+        return this;
+    }
+
+     return files.dropzone = dropzone;
+});
+define('skylark-domx-files/pastezone',[
+    "skylark-langx/objects",
+    "skylark-domx-eventer",
+    "./files"
+],function(objects, eventer, files){
+    function pastezone(elm, params) {
+        params = params || {};
+        var hoverClass = params.hoverClass || "pastezone",
+            pastedCallback = params.pasted;
+
+        eventer.on(elm, "paste", function(e) {
+            var items = e.originalEvent && e.originalEvent.clipboardData &&
+                e.originalEvent.clipboardData.items,
+                files = [];
+            if (items && items.length) {
+                objects.each(items, function(index, item) {
+                    var file = item.getAsFile && item.getAsFile();
+                    if (file) {
+                        files.push(file);
+                    }
+                });
+            }
+            if (pastedCallback && files.length) {
+                pastedCallback(files);
+            }
+        });
+
+        return this;
+    }
+
+    return files.pastezone = pastezone;
+
+});
+
+define('skylark-storages-diskfs/select',[
+    "./diskfs"
+],function(diskfs){
+    var fileInput,
+        fileInputForm,
+        fileSelected,
+        maxFileSize = 1 / 0;
+
+    function select(params) {
+        params = params || {};
+        var directory = params.directory || false,
+            multiple = params.multiple || false,
+            fileSelected = params.picked;
+        if (!fileInput) {
+            var input = fileInput = document.createElement("input");
+
+            function selectFiles(pickedFiles) {
+                for (var i = pickedFiles.length; i--;) {
+                    if (pickedFiles[i].size > maxFileSize) {
+                        pickedFiles.splice(i, 1);
+                    }
+                }
+                fileSelected(pickedFiles);
+            }
+
+            input.type = "file";
+            input.style.position = "fixed";
+            input.style.left = 0;
+            input.style.top = 0;
+            input.style.opacity = .001;
+            document.body.appendChild(input);
+
+            input.onchange = function(e) {
+                var entries = e.target.webkitEntries || e.target.entries;
+
+                if (entries && entries.length) {
+                    webentry.all(entries).then(function(files) {
+                        selectFiles(files);
+                    });
+                } else {
+                    selectFiles(Array.prototype.slice.call(e.target.files));
+                }
+                // reset to "", so selecting the same file next time still trigger the change handler
+                input.value = "";
+            };
+        }
+        fileInput.multiple = multiple;
+        fileInput.webkitdirectory = directory;
+        fileInput.click();
+    }
+
+    return diskfs.select = select;
+});
+
+
+define('skylark-domx-files/picker',[
+    "skylark-langx/objects",
+    "skylark-domx-eventer",
+    "./files",
+    "skylark-storages-diskfs/select"
+],function(objects, eventer, files, select){
+    /*
+     * Make the specified element to pop-up the file selection dialog box when clicked , and read the contents the files selected from client file system by user.
+     * @param {HTMLElement} elm
+     * @param {PlainObject} params
+     */
+    function picker(elm, params) {
+        eventer.on(elm, "click", function(e) {
+            e.preventDefault();
+            select(params);
+        });
+        return this;
+    }
+
+    return files.picker = picker;
+
+});
+
+
+
+define('skylark-domx-files/main',[
+	"./files",
+	"skylark-domx-velm",
+	"skylark-domx-query",
+	"./dropzone",
+	"./pastezone",
+	"./picker"
+],function(files,velm,$){
+	velm.delegate([
+		"dropzone",
+		"pastezone",
+		"picker"
+	],files);
+
+    $.fn.pastezone = $.wraps.wrapper_every_act(files.pastezone, files);
+    $.fn.dropzone = $.wraps.wrapper_every_act(files.dropzone, files);
+    $.fn.picker = $.wraps.wrapper_every_act(files.picker, files);
+
+	return files;
+});
+define('skylark-domx-files', ['skylark-domx-files/main'], function (main) { return main; });
 
 define('skylark-domx-geom/geom',[
     "skylark-langx/skylark",
@@ -9157,10 +9480,11 @@ define('skylark-domx-geom/geom',[
     return skylark.attach("domx.geom", geom);
 });
 define('skylark-domx-geom/main',[
+    "skylark-langx/langx",
     "./geom",
     "skylark-domx-velm",
     "skylark-domx-query"        
-],function(geom,velm,$){
+],function(langx,geom,velm,$){
    // from ./geom
     velm.delegate([
         "borderExtents",
@@ -9192,7 +9516,9 @@ define('skylark-domx-geom/main',[
     $.fn.scrollLeft = $.wraps.wrapper_value(geom.scrollLeft, geom);
 
     $.fn.position =  function(options) {
-        if (!this.length) return
+        if (!this.length) {
+            return this;
+        }
 
         if (options) {
             if (options.of && options.of.length) {
@@ -10266,6 +10592,13 @@ define('skylark-domx-plugins/plugins',[
             return this;
         },
 
+        getUID : function (prefix) {
+            prefix = prefix || "plugin";
+            do prefix += ~~(Math.random() * 1000000)
+            while (document.getElementById(prefix))
+            return prefix;
+        },
+
         elm : function() {
             return this._elm;
         }
@@ -10648,6 +10981,7 @@ define('skylark-widgets-base/Widget',[
   "skylark-domx-data",
   "skylark-domx-eventer",
   "skylark-domx-noder",
+  "skylark-domx-files",
   "skylark-domx-geom",
   "skylark-domx-velm",
   "skylark-domx-query",
@@ -10655,7 +10989,7 @@ define('skylark-widgets-base/Widget',[
   "skylark-domx-plugins",
   "skylark-data-collection/HashMap",
   "./base"
-],function(skylark,langx,browser,datax,eventer,noder,geom,elmx,$,fx,plugins,HashMap,base){
+],function(skylark,langx,browser,datax,eventer,noder,files,geom,elmx,$,fx, plugins,HashMap,base){
 
 /*---------------------------------------------------------------------------------*/
 
@@ -10721,7 +11055,8 @@ define('skylark-widgets-base/Widget',[
     _parse : function(elm,options) {
       var optionsAttr = datax.data(elm,"options");
       if (optionsAttr) {
-         var options1 = JSON.parse("{" + optionsAttr + "}");
+         //var options1 = JSON.parse("{" + optionsAttr + "}");
+         var options1 = eval("({" + optionsAttr + "})");
          options = langx.mixin(options1,options); 
       }
       return options || {};
@@ -10989,6 +11324,10 @@ define('skylark-widgets-base/Widget',[
       return fx.throb(this._elm,params);
     },
 
+    emit : function(type,params) {
+      var e = langx.Emitter.createEvent(type,params);
+      return langx.Emitter.prototype.emit.call(this,e);
+    },
 
     /**
      *  Attach the current widget element to dom document.
@@ -22629,7 +22968,7 @@ define('skylark-easyeditor/EasyEditor',[
 	return  EasyEditor;	
 });
 
-define('skylark-widgets-coder/Preview',[
+define('skylark-widgets-textpad/Preview',[
   "skylark-langx/langx",
   "skylark-domx-browser",
   "skylark-domx-data",
@@ -23309,11 +23648,11 @@ define('skylark-widgets-coder/Preview',[
     return Preview;
 });
 
-define('skylark-widgets-coder/helper',[
+define('skylark-widgets-textpad/helper',[
     "skylark-langx/langx",
     "skylark-domx-query",
-	"./coder"
-],function(langx,$,coder) {
+	"./textpad"
+],function(langx,$,textpad) {
     var helper = {
         debounce : function(func, wait, immediate) {
             var timeout;
@@ -23364,20 +23703,20 @@ define('skylark-widgets-coder/helper',[
     };
 
 
-    return coder.helper = helper;
+    return textpad.helper = helper;
 
   	
  });
-define('skylark-widgets-coder/Editor',[
+define('skylark-widgets-textpad/Editor',[
     "skylark-langx/langx",
     "skylark-domx-query",
     "skylark-widgets-swt/Widget",
     "skylark-codemirror/CodeMirror",
     "skylark-easyeditor/EasyEditor",
-    "./coder",
+    "./textpad",
     "./Preview",
     "./helper"
-],function(langx, $, Widget,CodeMirror,EasyEditor,coder,Preview,helper){
+],function(langx, $, Widget,CodeMirror,EasyEditor,textpad,Preview,helper){
     var Editor = Widget.inherit({
         options: {
             addons       : [],
@@ -23870,19 +24209,19 @@ define('skylark-widgets-coder/Editor',[
     }
 
 
-    return coder.Editor = Editor;
+    return textpad.Editor = Editor;
 
 
 });
 
 
-define('skylark-widgets-coder/main',[
-    "./coder",
+define('skylark-widgets-textpad/main',[
+    "./textpad",
     "./Editor"
-], function(coder) {
-    return coder;
+], function(textpad) {
+    return textpad;
 });
-define('skylark-widgets-coder', ['skylark-widgets-coder/main'], function (main) { return main; });
+define('skylark-widgets-textpad', ['skylark-widgets-textpad/main'], function (main) { return main; });
 
 
 },this);

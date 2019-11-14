@@ -1,8 +1,8 @@
 /**
- * skylark-widgets-coder - The skylark codeeditor widget
+ * skylark-widgets-textpad - The skylark text editor widget
  * @author Hudaokeji, Inc.
  * @version v0.9.0
- * @link https://github.com/skylark-widgets/skylark-widgets-codeeditor/
+ * @link https://github.com/skylark-widgets/skylark-widgets-textpad/
  * @license MIT
  */
 (function(factory,globals) {
@@ -86,12 +86,12 @@
 
 })(function(define,require) {
 
-define('skylark-widgets-coder/coder',[
+define('skylark-widgets-textpad/textpad',[
 	"skylark-langx/skylark"
 ],function(skylark){
-	return skylark.attach("widgets.coder",{});
+	return skylark.attach("widgets.textpad",{});
 });
-define('skylark-widgets-coder/Preview',[
+define('skylark-widgets-textpad/Preview',[
   "skylark-langx/langx",
   "skylark-domx-browser",
   "skylark-domx-data",
@@ -771,11 +771,11 @@ define('skylark-widgets-coder/Preview',[
     return Preview;
 });
 
-define('skylark-widgets-coder/helper',[
+define('skylark-widgets-textpad/helper',[
     "skylark-langx/langx",
     "skylark-domx-query",
-	"./coder"
-],function(langx,$,coder) {
+	"./textpad"
+],function(langx,$,textpad) {
     var helper = {
         debounce : function(func, wait, immediate) {
             var timeout;
@@ -826,20 +826,20 @@ define('skylark-widgets-coder/helper',[
     };
 
 
-    return coder.helper = helper;
+    return textpad.helper = helper;
 
   	
  });
-define('skylark-widgets-coder/Editor',[
+define('skylark-widgets-textpad/Editor',[
     "skylark-langx/langx",
     "skylark-domx-query",
     "skylark-widgets-swt/Widget",
     "skylark-codemirror/CodeMirror",
     "skylark-easyeditor/EasyEditor",
-    "./coder",
+    "./textpad",
     "./Preview",
     "./helper"
-],function(langx, $, Widget,CodeMirror,EasyEditor,coder,Preview,helper){
+],function(langx, $, Widget,CodeMirror,EasyEditor,textpad,Preview,helper){
     var Editor = Widget.inherit({
         options: {
             addons       : [],
@@ -1332,20 +1332,20 @@ define('skylark-widgets-coder/Editor',[
     }
 
 
-    return coder.Editor = Editor;
+    return textpad.Editor = Editor;
 
 
 });
 
 
-define('skylark-widgets-coder/main',[
-    "./coder",
+define('skylark-widgets-textpad/main',[
+    "./textpad",
     "./Editor"
-], function(coder) {
-    return coder;
+], function(textpad) {
+    return textpad;
 });
-define('skylark-widgets-coder', ['skylark-widgets-coder/main'], function (main) { return main; });
+define('skylark-widgets-textpad', ['skylark-widgets-textpad/main'], function (main) { return main; });
 
 
 },this);
-//# sourceMappingURL=sourcemaps/skylark-widgets-coder.js.map
+//# sourceMappingURL=sourcemaps/skylark-widgets-textpad.js.map

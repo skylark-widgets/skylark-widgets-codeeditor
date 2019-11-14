@@ -4,10 +4,10 @@ define([
     "skylark-widgets-swt/Widget",
     "skylark-codemirror/CodeMirror",
     "skylark-easyeditor/EasyEditor",
-    "./coder",
+    "./textpad",
     "./Preview",
     "./helper"
-],function(langx, $, Widget,CodeMirror,EasyEditor,coder,Preview,helper){
+],function(langx, $, Widget,CodeMirror,EasyEditor,textpad,Preview,helper){
     var Editor = Widget.inherit({
         options: {
             addons       : [],
@@ -500,7 +500,7 @@ define([
     }
 
 
-    return coder.Editor = Editor;
+    return textpad.Editor = Editor;
 
 
 });
