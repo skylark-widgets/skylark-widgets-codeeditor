@@ -25,12 +25,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "skylark-codemirror": "git+https://github.com/skylark-integration/skylark-codemirror.git#master",
-    "skylark-easyeditor": "git+https://github.com/skylark-integration/skylark-easyeditor.git#master",
-    "skylark-langx": "git+https://github.com/skylark-langx/skylark-langx.git#master",
-    "skylark-parsers-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git#master",
-    "skylark-texts-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git#master",
-    "skylark-widgets-base": "git+https://github.com/skylark-widgets/skylark-widgets-base.git#master"
+    "skylark-codemirror": "git+https://github.com/skylark-integration/skylark-codemirror.git",
+    "skylark-easyeditor": "git+https://github.com/skylark-integration/skylark-easyeditor.git",
+    "skylark-langx": "git+https://github.com/skylark-langx/skylark-langx.git",
+    "skylark-parsers-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git",
+    "skylark-texts-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git",
+    "skylark-widgets-base": "git+https://github.com/skylark-widgets/skylark-widgets-base.git"
   },
   "engines": {
     "node": ">=0.10.1"
