@@ -28,8 +28,7 @@
     "skylark-codemirror": "git+https://github.com/skylark-integration/skylark-codemirror.git",
     "skylark-easyeditor": "git+https://github.com/skylark-integration/skylark-easyeditor.git",
     "skylark-langx": "git+https://github.com/skylark-langx/skylark-langx.git",
-    "skylark-parsers-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git",
-    "skylark-texts-markdown": "git+https://github.com/skylark-parsers/skylark-parsers-markdown.git",
+    "skylark-texts-markdown": "git+https://github.com/skylark-texts/skylark-texts-markdown.git",
     "skylark-widgets-base": "git+https://github.com/skylark-widgets/skylark-widgets-base.git"
   },
   "engines": {
